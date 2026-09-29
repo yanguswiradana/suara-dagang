@@ -68,10 +68,7 @@ export async function callGemini(
       }),
     }
   );
-  if (!res.ok) {
-    const errBody = await res.text().catch(() => "");
-    throw new Error(`gemini_http_${res.status}: ${errBody.slice(0, 300)}`);
-  }
+  if (!res.ok) throw new Error(`gemini_http_${res.status}`);
   const json = await res.json();
   const text: string | undefined =
     json.candidates?.[0]?.content?.parts

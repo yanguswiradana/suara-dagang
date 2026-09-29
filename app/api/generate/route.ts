@@ -17,7 +17,7 @@ export async function POST(req: NextRequest) {
       { status: 500 }
     );
   }
-  const model = process.env.GEMINI_MODEL || "gemini-2.0-flash";
+  const model = process.env.GEMINI_MODEL || "gemini-3.8-flash";
 
   let body: GenerateInput & { imageBase64?: string };
   try {
@@ -71,21 +71,19 @@ export async function POST(req: NextRequest) {
   let raw: string;
   try {
     raw = await callGemini(apiKey, model, prompt, imageBase64);
-  } catch (e) {
-    const detail = e instanceof Error ? e.message : "unknown";
+  } catch {
     // Fallback: retry once WITHOUT the image (text-only path always works).
     if (!imageBase64) {
       return NextResponse.json(
-        { error: `AI gagal [${model}]: ${detail}` },
+        { error: "AI sedang sibuk / kuota habis. Coba lagi sebentar." },
         { status: 502 }
       );
     }
     try {
       raw = await callGemini(apiKey, model, prompt);
-    } catch (e2) {
-      const detail2 = e2 instanceof Error ? e2.message : "unknown";
+    } catch {
       return NextResponse.json(
-        { error: `AI gagal [${model}]: ${detail2}` },
+        { error: "AI sedang sibuk / kuota habis. Coba lagi sebentar." },
         { status: 502 }
       );
     }
