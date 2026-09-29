@@ -1,6 +1,6 @@
 # SuaraDagang - Arsitektur
 
-> Dokumen hidup. Terakhir diperbarui: 2026-09-28
+> Dokumen hidup. Terakhir diperbarui: 2026-09-29 (setelah MVP live)
 
 ## Ringkasan
 
@@ -23,9 +23,10 @@ caption + 15 hashtag siap copy. Tanpa auth, tanpa database di MVP.
 ```
 [Form client] --POST /api/generate--> [route.ts]
                                         ├─ validasi input (produk + desc wajib)
+                                        ├─ cache lookup: sha256(input) → hit = return instan
+                                        │    (cache hit TIDAK mengurangi rate limit)
                                         ├─ rate limit: 10x/jam/IP (in-memory)
-                                        ├─ cache: sha256(input) → hasil (24h, max 200)
-                                        ├─ Gemini generateContent (1 request)
+                                        ├─ Gemini generateContent (gemini-3.5-flash-lite)
                                         │    ├─ sukses → parse JSON
                                         │    └─ gagal + ada foto → retry 1x TANPA foto
                                         ├─ sanitize hashtags (banned filter + paksa lokal)
@@ -83,5 +84,5 @@ Error: `400` input tidak valid · `429` rate limit · `502` AI gagal/kosong ·
 
 ```
 GEMINI_API_KEY=wajib
-GEMINI_MODEL=gemini-2.0-flash   # opsional
+GEMINI_MODEL=gemini-3.5-flash-lite   # opsional, default saat ini
 ```

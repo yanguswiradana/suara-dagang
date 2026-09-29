@@ -1,14 +1,18 @@
 # SuaraDagang
 
-Caption + hashtag siap posting untuk UMKM. Isi form, generate via AI,
-salin, posting. Deadline MVP: 2026-10-01.
+Caption + hashtag siap posting untuk UMKM Bali. Isi form, generate via AI,
+salin, posting. **MVP selesai 2026-09-29**, deadline 2026-10-01.
+
+**Live:** https://suara-dagang.vercel.app
 
 ## Stack
 
 - Next.js 15 App Router + Tailwind v4 (deploy Vercel)
-- AI: Google AI Studio (Gemini) via REST, 1 request = 3 caption + 15 hashtag
+- AI: Google AI Studio (Gemini REST), model `gemini-3.5-flash-lite`
 - Storage MVP: React state (sementara) - auto-save ke localStorage.
   Tanpa database (alasan di bawah).
+- Desain: editorial workspace - Fraunces / Space Grotesk / IBM Plex Mono,
+  light + dark mode, token lengkap di `docs/DESIGN.md`
 
 ## Storage: kenapa localStorage, bukan database?
 
@@ -23,8 +27,8 @@ saat itu migrasi history lokal ke tabel per-user.
 ## Alur data
 
 1. Form submit - validasi client (produk + deskripsi wajib).
-2. `POST /api/generate`: rate limit 10x/jam/IP - cek cache hash input
-   (hit = respons instan, tanpa AI call) - panggil Gemini.
+2. `POST /api/generate`: validasi - cek cache hash input (hit = instan,
+   TANPA mengurangi kuota) - rate limit 10x/jam/IP - panggil Gemini.
 3. Jika request bawa foto dan AI gagal: retry 1x otomatis TANPA foto
    (jalur teks selalu jalan, sesuai scope terkunci).
 4. Hashtag AI dibersihkan: dedupe, buang banned list, paksa min 3 tag
@@ -42,7 +46,10 @@ npm run dev
 Deploy Vercel: import repo, tambah env `GEMINI_API_KEY` (+ opsional
 `GEMINI_MODEL`), deploy.
 
-## Keterbatasan jujur (untuk README/demo)
+Catatan: `next build` bisa gagal (Bus Error) di Docker overlay tertentu -
+build di host atau di Vercel, bukan di container.
+
+## Keterbatasan jujur (untuk demo)
 
 - Skor hashtag itu heuristik (campuran broad/mid/lokal + banned-filter),
   BUKAN pengetahuan algoritma Instagram.
@@ -52,12 +59,13 @@ Deploy Vercel: import repo, tambah env `GEMINI_API_KEY` (+ opsional
 
 ## Acceptance criteria MVP
 
-- [ ] Isi produk + deskripsi + kategori - hasil <15 detik
-- [ ] 3 caption + 15 hashtag tampil, tombol salin bekerja
-- [ ] History survive refresh
-- [ ] Kuota/AI gagal: pesan jelas + tombol coba lagi, app tetap usable
+- [x] Isi produk + deskripsi + kategori - hasil <15 detik (terverifikasi
+      produksi 2026-09-29)
+- [x] 3 caption + 15 hashtag tampil, tombol salin bekerja
+- [x] History survive refresh (localStorage)
+- [x] Kuota/AI gagal: pesan jelas + tombol coba lagi, app tetap usable
 
 ## Roadmap (bukan MVP)
 
 Auth, database, scheduling posting, tracking performa, team workspace,
-API publik.
+API publik - lihat `docs/roadmap.md`.

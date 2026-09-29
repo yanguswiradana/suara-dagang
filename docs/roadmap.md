@@ -1,8 +1,8 @@
 # SuaraDagang - Roadmap
 
-> Urutan pengerjaan bertahap. Deadline MVP: 2026-10-01 (solo).
+> Urutan pengerjaan bertahap. MVP: 2026-09-29 (solo).
 
-## Fase 0 - Fondasi (SELESAI)
+## Fase 0 - Fondasi (SELESAI ✅ 2026-09-28)
 
 - [x] Riset ide + perbandingan 4 kandidat, pemenang: Caption Studio → nama **SuaraDagang**
 - [x] Grilling scope: persona UMKM, foto opsional, Google AI Studio, hashtag heuristic
@@ -10,18 +10,21 @@
 - [x] Scaffold Next.js: API route + lib (gemini, hashtags, rate-limit, cache, storage)
 - [x] Slicing final `slicing/index.html`: landing band + workspace editorial, dark/light
 
-## Fase 1 - MVP fungsional (target 2026-10-01)
+## Fase 1 - MVP fungsional (SELESAI ✅ 2026-09-29)
 
-- [ ] Port slicing → komponen Next.js (`app/page.tsx` + Tailwind kelas, sama persis token)
-- [ ] Wire form ke `/api/generate` sungguhan (bukan MOCK)
-- [ ] State loading / error / retry di client
-- [ ] Verifikasi end-to-end lokal: npm run dev + API key nyata
-- [ ] README final: setup, keterbatasan jujur, acceptance criteria tercentang
-- [ ] Deploy Vercel + env + smoke test URL publik
+- [x] Port slicing → `app/page.tsx` + `app/globals.css` + `app/layout.tsx`
+- [x] Wire form ke `/api/generate` sungguhan (bukan MOCK)
+- [x] State loading / error / retry di client
+- [x] Cache sebelum rate limit (cache hit tidak makan kuota)
+- [x] Deploy Vercel + env + smoke test URL publik
+- [x] Model fallback ke `gemini-3.5-flash-lite` (2.0-flash ditutup Google)
+- [x] API terverifikasi produksi: HTTP 200, 3 caption + 15 hashtag
+- [x] README final + `docs/DESIGN.md` + `docs/architecture.md`
+- [x] tsc --noEmit 0 error
 
-**Definisi selesai:** isi produk + deskripsi + kategori → hasil <15 detik →
-3 caption + 15 hashtag tampil → tombol salin bekerja → history survive
-refresh → error kuota menampilkan pesan jelas.
+**Live:** https://suara-dagang.vercel.app
+**Acceptance criteria tercentang:** isi produk + deskripsi + kategori →
+<15 detik → 3 caption + 15 hashtag → salin bekerja → history survive refresh.
 
 ## Fase 2 - V2 (setelah MVP live)
 
