@@ -117,7 +117,7 @@
       bukan sekadar like.
     </h1>
     <p class="text-base sm:text-lg mt-4 max-w-xl leading-relaxed" style="color:var(--soft)">
-      Isi deskripsi produkmu, pilih gaya bahasa, dapatkan tiga opsi caption + 15 hashtag yang siap copy-paste ke Instagram. Untuk pedagang, bukan kreator.
+      Isi deskripsi produkmu, pilih satu gaya bahasa, dapatkan tiga varian caption dalam gaya itu + 15 hashtag siap copy-paste ke Instagram. Untuk pedagang, bukan kreator.
     </p>
     <div class="flex flex-wrap items-center gap-3 mt-6">
       <a href="#tool" class="btn-fuel px-6 py-3 text-sm font-bold uppercase tracking-wide">Coba sekarang</a>
@@ -128,7 +128,7 @@
     <div class="rule mt-8 pt-5 flex flex-wrap gap-x-8 gap-y-3">
       <div>
         <span class="font-display text-3xl font-bold">3</span>
-        <p class="kicker mt-1">Opsi caption</p>
+        <p class="kicker mt-1">Varian per gaya</p>
       </div>
       <div>
         <span class="font-display text-3xl font-bold">15</span>
@@ -260,11 +260,12 @@
       <!-- Empty state -->
       <div id="placeholder" class="mt-10 max-w-2xl">
         <p class="font-display text-4xl sm:text-5xl leading-[1.05]">Panel ini masih kosong.</p>
-        <p class="text-sm mt-3 max-w-md" style="color:var(--soft)">Isi brief di rail kiri lalu tekan Generate. Tiga opsi caption bergaya berbeda plus hashtag lokal Bali akan mendarat di sini.</p>
+        <p class="text-sm mt-3 max-w-md" style="color:var(--soft)">Pilih gaya bahasa di rail kiri, lalu tekan Generate. Tiga varian caption dalam gaya itu plus hashtag lokal Bali akan mendarat di sini.</p>
         <ul class="mt-6 space-y-2 text-sm" style="color:var(--faint)">
-          <li class="flex gap-3"><span class="kicker">01</span> Santai - sapaan akrab, emoji hemat</li>
-          <li class="flex gap-3"><span class="kicker">02</span> Formal - info lengkap, tanpa basa-basi</li>
-          <li class="flex gap-3"><span class="kicker">03</span> Promosi - urgensi + ajakan pesan</li>
+          <li class="flex gap-3"><span class="kicker">Santai</span> casual, humoris, atau cerita harian</li>
+          <li class="flex gap-3"><span class="kicker">Formal</span> informatif, singkat, atau premium</li>
+          <li class="flex gap-3"><span class="kicker">Promosi</span> urgensi, harga, atau hype</li>
+          <li class="flex gap-3"><span class="kicker">Bali Vibes</span> santai, komunitas, atau promo lokal</li>
         </ul>
       </div>
 
@@ -323,22 +324,40 @@
     // ── Clock ──
     document.getElementById('clock').textContent = new Date().toLocaleString('id-ID', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' });
 
-    // ── Tone segmented control ──
+    // ── Mock data per tone: 3 variants of the SELECTED tone ──
+    const MOCKS = {
+      santai: [
+        { label: "santai-casual", text: "Eh, udah nyobain belum ayam betutu frozen dari Warung Sari Rasa? Ayam kampung full bumbu base gede, tinggal angetin 10 menit langsung jadi. Tahan sebulan di freezer, cuma 85 ribu. DM aja ya!" },
+        { label: "santai-humoris", text: "Peringatan: sekali coba ayam betutu frozen ini, nasi sebakul bisa ludes. Ayam kampung + bumbu base gede meresap sampe tulang. 85 ribu, stok freezer aman sebulan. DM sebelum nyesel!" },
+        { label: "santai-story", text: "Pulang kerja malem, perut bunyi, nggak ada yang masak? Tenang. Ayam betutu frozen Warung Sari Rasa tinggal angetin, 10 menit beres. Ayam kampung 85 ribu, tahan sebulan di freezer. DM sekarang!" },
+      ],
+      formal: [
+        { label: "formal-informatif", text: "Ayam Betutu Frozen 500 gr dari Warung Sari Rasa. Berbahan ayam kampung pilihan dengan bumbu base genep tradisional Bali. Tahan hingga satu bulan dalam freezer. Harga Rp 85.000. Pemesanan: kirim DM Instagram." },
+        { label: "formal-singkat", text: "Ayam Betutu Frozen 500 gr. Ayam kampung, bumbu base genep, Rp 85.000. Tahan 1 bulan di freezer. DM untuk pesan." },
+        { label: "formal-premium", text: "Menghadirkan cita rasa autentik kuliner Bali ke meja makan Anda. Ayam kampung pilihan, rempah base genep berkualitas, kemasan higienis 500 gr, Rp 85.000. Hubungi kami via DM untuk pemesanan." },
+      ],
+      promosi: [
+        { label: "promosi-urgensi", text: "STOK TERBATAS! Ayam betutu frozen Warung Sari Rasa tinggal sedikit hari ini. Ayam kampung 85 ribu, tahan sebulan di freezer. DM SEKARANG sebelum kehabisan!" },
+        { label: "promosi-harga", text: "Cuma 85 ribu buat 500 gr ayam betutu frozen ayam kampung! Lebih hemat dari jajan di luar, stok sebulan aman. Borong sekarang, DM kami hari ini!" },
+        { label: "promosi-hype", text: "WAAH ADA YANG BIKIN NGILER! Ayam betutu frozen legendaris Warung Sari Rasa! Ayam kampung + bumbu nampol, 85 ribu aja. Buruan DM sebelum kehabisan!" },
+      ],
+      balivibes: [
+        { label: "balivibes-santai", text: "Rahajeng semeton! Ada ayam betutu frozen enak dari Warung Sari Rasa. Ayam kampung, bumbu base gede, 85 ribu mawon. DM dumun nggih!" },
+        { label: "balivibes-komunitas", text: "Untuk semeton sareng sami, Warung Sari Rasa sedia ayam betutu frozen 500 gr. Rasa rumahan, harga 85 ribu, tahan sebulan. Matur suksma, DM manten!" },
+        { label: "balivibes-promo", text: "Dumogi rahayu! Promo ayam betutu frozen: ayam kampung asli, bumbu melimpah, 85 ribu saja! Stok terbatas, dumogi polih. DM sekarang!" },
+      ],
+    };
+    const TAGS = ["#umkmbali","#belilokal","#dukungumkm","#madeinbali","#banggalokal","#kulinerbali","#makananbali","#baliufood","#betutubali","#frozenfood","#foodiebali","#masakannusantara","#oleholehbali","#ayambetutu","#rasabali"];
+
+    // Track selected tone: [value, display]
+    let currentTone = "santai";
+    const TONE_VALUES = { "Santai": "santai", "Formal": "formal", "Promosi": "promosi", "Bali Vibes": "balivibes" };
     const toneBtns = [...document.querySelectorAll('#toneGroup .tone-btn')];
     toneBtns.forEach(b => b.addEventListener('click', () => {
       toneBtns.forEach(x => x.setAttribute('aria-pressed', 'false'));
       b.setAttribute('aria-pressed', 'true');
+      currentTone = TONE_VALUES[b.textContent.trim()] || "santai";
     }));
-
-    // ── Mock data ──
-    const MOCK = {
-      captions: [
-        { label: "santai", text: "Bos, ada yang nyari ayam betutu frozen enak? Ayam kampung penuh bumbu base gede, tinggal goreng atau bakar. Tahan sebulan di freezer, harga cuma 85 ribu. Langsung DM ya, Rahajeng!" },
-        { label: "formal", text: "Ayam Betutu Frozen 500 gr dari Warung Sari Rasa. Berbahan ayam kampung pilihan dengan bumbu tradisional Bali autentik. Tahan hingga satu bulan dalam kondisi beku. Harga Rp 85.000. Pemesanan: kirim DM atau hubungi kami." },
-        { label: "promosi", text: "Makan betutu tiap hari? Bisa! Ayam Betutu Frozen kami siap masak kapan saja. Bumbu ngeresap, tekstur juicy, harga ramah kantong: Rp 85.000 per 500 gr. Stok terbatas - order sekarang sebelum kehabisan!" }
-      ],
-      hashtags: ["#umkmbali","#belilokal","#dukungumkm","#madeinbali","#banggalokal","#kulinerbali","#makananbali","#baliufood","#betutubali","#frozenfood","#foodiebali","#masakannusantara","#oleholehbali","#ayambetutu","#rasabali"]
-    };
 
     // ── History ──
     let historyItems = JSON.parse(localStorage.getItem('sd:history') || '[]');
@@ -359,10 +378,12 @@
           <button class="kicker hover:text-red-500" onclick="removeHistory(${i})">hapus</button>
         </li>`).join('');
     }
-    function restore(i) { renderResult(MOCK, historyItems[i].product, false); }
+    let currentResult = null; // data last rendered (for copy + restore)
+    function restore(i) { const h = historyItems[i]; if (h) renderResult({ captions: h.captions, hashtags: h.hashtags }, h.product, false); }
     function removeHistory(i) { historyItems.splice(i, 1); saveHistory(); renderHistory(); }
 
     function renderResult(data, product, push = true) {
+      currentResult = data;
       document.getElementById('placeholder').classList.add('hidden');
       document.getElementById('resultCards').classList.remove('hidden');
       document.getElementById('resultMeta').textContent = (product || document.getElementById('product').value || 'preview') + ' / ' + data.captions.length + ' opsi / ' + data.hashtags.length + ' tag';
@@ -391,15 +412,16 @@
 
     document.getElementById('genForm').addEventListener('submit', e => {
       e.preventDefault();
-      renderResult(MOCK);
+      renderResult({ captions: MOCKS[currentTone] ?? MOCKS.santai, hashtags: TAGS });
       if (window.innerWidth < 1024) document.getElementById('resultCards').scrollIntoView({ behavior: 'smooth', block: 'start' });
     });
 
     async function copy(key, btn) {
+      if (!currentResult) return;
       const map = {
-        cap0: MOCK.captions[0].text, cap1: MOCK.captions[1].text, cap2: MOCK.captions[2].text,
-        tags: MOCK.hashtags.join(' '),
-        all: MOCK.captions[0].text + '\n\n.\n.\n.\n' + MOCK.hashtags.join(' ')
+        cap0: currentResult.captions[0]?.text ?? "", cap1: currentResult.captions[1]?.text ?? "", cap2: currentResult.captions[2]?.text ?? "",
+        tags: currentResult.hashtags.join(' '),
+        all: (currentResult.captions[0]?.text ?? "") + '\n\n.\n.\n.\n' + currentResult.hashtags.join(' ')
       };
       const text = map[key];
       if (!text) return;
