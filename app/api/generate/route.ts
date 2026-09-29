@@ -17,7 +17,7 @@ export async function POST(req: NextRequest) {
       { status: 500 }
     );
   }
-  const model = process.env.GEMINI_MODEL || "gemini-3.8-flash";
+  const model = process.env.GEMINI_MODEL || "gemini-3.5-flash-lite";
 
   let body: GenerateInput & { imageBase64?: string };
   try {
