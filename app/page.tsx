@@ -373,12 +373,14 @@ export default function Home() {
             <div className="mt-10 max-w-2xl">
               <p className="text-4xl sm:text-5xl leading-[1.05]" style={{ fontFamily: "var(--font-fraunces)" }}>Panel ini masih kosong.</p>
               <p className="text-sm mt-3 max-w-md" style={{ color: "var(--soft)" }}>
-                Isi brief di rail kiri lalu tekan Generate. Tiga opsi caption bergaya berbeda plus hashtag lokal Bali akan mendarat di sini.
+                Pilih gaya bahasa di rail kiri, lalu tekan Generate. Tiga varian
+                caption dalam gaya itu plus hashtag lokal Bali akan mendarat di sini.
               </p>
               <ul className="mt-6 space-y-2 text-sm" style={{ color: "var(--faint)" }}>
-                <li className="flex gap-3"><span className="kicker">01</span> Santai - sapaan akrab, emoji hemat</li>
-                <li className="flex gap-3"><span className="kicker">02</span> Formal - info lengkap, tanpa basa-basi</li>
-                <li className="flex gap-3"><span className="kicker">03</span> Promosi - urgensi + ajakan pesan</li>
+                <li className="flex gap-3"><span className="kicker">Santai</span> casual, humoris, atau cerita harian</li>
+                <li className="flex gap-3"><span className="kicker">Formal</span> informatif, singkat, atau premium</li>
+                <li className="flex gap-3"><span className="kicker">Promosi</span> urgensi, harga, atau hype</li>
+                <li className="flex gap-3"><span className="kicker">Bali Vibes</span> santai, komunitas, atau promo lokal</li>
               </ul>
             </div>
           )}

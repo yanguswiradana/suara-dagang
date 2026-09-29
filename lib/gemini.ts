@@ -18,26 +18,55 @@ const TONE_GUIDE: Record<string, string> = {
     "Warm Balinese flavor: insert 1-2 natural Balinese phrases (e.g. Rahajeng, Matur Suksma, Dumogi) without overdoing it, friendly selling tone.",
 };
 
+// 3 distinct angles WITHIN each selected tone. The user picks ONE tone;
+// we return 3 variants of it, not 3 different tones.
+const TONE_VARIANTS: Record<string, { label: string; guide: string }[]> = {
+  santai: [
+    { label: "santai-casual", guide: "chatty, like texting a friend about the product" },
+    { label: "santai-humoris", guide: "playful, light joke or pun related to the product" },
+    { label: "santai-story", guide: "warm relatable daily scene where the product fits naturally" },
+  ],
+  formal: [
+    { label: "formal-informatif", guide: "complete product facts: ingredients/materials, size, price, shelf life" },
+    { label: "formal-singkat", guide: "concise and business-like, no filler words" },
+    { label: "formal-premium", guide: "polite upscale positioning, emphasizes quality and trust" },
+  ],
+  promosi: [
+    { label: "promosi-urgensi", guide: "limited stock / act-now framing with strong CTA" },
+    { label: "promosi-harga", guide: "price-focused value angle (e.g. 'worth it', compare benefits)" },
+    { label: "promosi-hype", guide: "excited launch energy, exclamation, emoji-forward" },
+  ],
+  balivibes: [
+    { label: "balivibes-santai", guide: "casual chat with natural Balinese greeting words" },
+    { label: "balivibes-komunitas", guide: "warm neighborly / banjar family feeling" },
+    { label: "balivibes-promo", guide: "festive local promo angle, proudly Balinese" },
+  ],
+};
+
 export function buildPrompt(input: GenerateInput): string {
   const lang = input.language === "en" ? "English" : "Bahasa Indonesia";
+  const tone = input.tone in TONE_VARIANTS ? input.tone : "santai";
+  const variants = TONE_VARIANTS[tone];
+  const variantLines = variants
+    .map((v, i) => `${i + 1}. ${v.label} - ${v.guide}`)
+    .join("\n");
   return `You are a copywriter for Indonesian UMKM on Instagram.
 Business: "${input.businessName}" | Category: ${input.category}
 Product: "${input.product}"
 Description: "${input.description}"
 
-Write ALL output in ${lang}. Produce EXACTLY 3 captions with distinct angles:
-1. santai - ${TONE_GUIDE.santai}
-2. formal - ${TONE_GUIDE.formal}
-3. promosi - ${TONE_GUIDE.promosi}
-${input.tone === "balivibes" ? `Apply the Bali vibes style ON TOP of each angle: ${TONE_GUIDE.balivibes}` : ""}
+Selected tone: ${tone.toUpperCase()} - ${TONE_GUIDE[tone]}
 
-Each caption: 60-120 words, ends with a call-to-action (order / DM / visit).
+Write ALL output in ${lang}. Produce EXACTLY 3 captions in THIS SAME TONE, each a distinct angle:
+${variantLines}
+
+Each caption: 60-120 words, ends with a call-to-action (order / DM / visit), and must match the selected tone above.
 Then suggest EXACTLY 15 hashtags: mix of 5 broad, 5 medium-niche, 5 Bali-local
 (e.g. umkmbali, kulinerbali, oleholehbali). No banned/spam tags
 (love, instagood, like4like, follow4follow, viral, fyp).
 
-Respond with ONLY valid JSON, no markdown fences:
-{"captions":[{"label":"santai","text":"..."},{"label":"formal","text":"..."},{"label":"promosi","text":"..."}],"hashtags":["..."]}`;
+Respond with ONLY valid JSON, no markdown fences, labels EXACTLY as given above:
+{"captions":[{"label":"${variants[0].label}","text":"..."},{"label":"${variants[1].label}","text":"..."},{"label":"${variants[2].label}","text":"..."}],"hashtags":["..."]}`;
 }
 
 export interface GeminiResult {
