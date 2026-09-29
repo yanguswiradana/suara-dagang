@@ -1,0 +1,106 @@
+import { NextRequest, NextResponse } from "next/server";
+import {
+  buildPrompt,
+  callGemini,
+  parseGeminiJson,
+  type GenerateInput,
+} from "@/lib/gemini";
+import { sanitizeHashtags } from "@/lib/hashtags";
+import { checkRateLimit } from "@/lib/rate-limit";
+import { getCache, hashInput, setCache } from "@/lib/cache";
+
+export async function POST(req: NextRequest) {
+  const apiKey = process.env.GEMINI_API_KEY;
+  if (!apiKey) {
+    return NextResponse.json(
+      { error: "Server belum dikonfigurasi (GEMINI_API_KEY kosong)." },
+      { status: 500 }
+    );
+  }
+  const model = process.env.GEMINI_MODEL || "gemini-2.0-flash";
+
+  let body: GenerateInput & { imageBase64?: string };
+  try {
+    body = await req.json();
+  } catch {
+    return NextResponse.json({ error: "Body request tidak valid." }, { status: 400 });
+  }
+
+  const { businessName, product, description, category, tone, language, imageBase64 } = body;
+  if (!product?.trim() || !description?.trim()) {
+    return NextResponse.json(
+      { error: "Nama produk dan deskripsi wajib diisi." },
+      { status: 400 }
+    );
+  }
+
+  const ip =
+    req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ??
+    "unknown";
+  const limit = checkRateLimit(ip);
+  if (!limit.allowed) {
+    return NextResponse.json(
+      {
+        error: `Batas generate tercapai (10x/jam). Coba lagi dalam ${Math.ceil(
+          limit.retryAfterSec / 60
+        )} menit.`,
+      },
+      { status: 429 }
+    );
+  }
+
+  const input: GenerateInput = {
+    businessName: businessName?.trim() || "-",
+    product: product.trim(),
+    description: description.trim(),
+    category: category || "umum",
+    tone: tone || "santai",
+    language: language || "id",
+  };
+
+  const cacheKey = hashInput({ ...input, hasImage: !!imageBase64 });
+  const cached = getCache(cacheKey);
+  if (cached) {
+    return NextResponse.json({ ...(cached as object), cached: true });
+  }
+
+  const prompt = buildPrompt(input);
+  let raw: string;
+  try {
+    raw = await callGemini(apiKey, model, prompt, imageBase64);
+  } catch {
+    // Fallback: retry once WITHOUT the image (text-only path always works).
+    if (!imageBase64) {
+      return NextResponse.json(
+        { error: "AI sedang sibuk / kuota habis. Coba lagi sebentar." },
+        { status: 502 }
+      );
+    }
+    try {
+      raw = await callGemini(apiKey, model, prompt);
+    } catch {
+      return NextResponse.json(
+        { error: "AI sedang sibuk / kuota habis. Coba lagi sebentar." },
+        { status: 502 }
+      );
+    }
+  }
+
+  let parsed;
+  try {
+    parsed = parseGeminiJson(raw);
+  } catch {
+    return NextResponse.json(
+      { error: "Gagal membaca hasil AI. Coba lagi." },
+      { status: 502 }
+    );
+  }
+
+  const result = {
+    captions: parsed.captions,
+    hashtags: sanitizeHashtags(parsed.hashtags, input.category),
+    cached: false,
+  };
+  setCache(cacheKey, result);
+  return NextResponse.json(result);
+}

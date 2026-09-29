@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SuaraDagang - Caption & Hashtag untuk UMKM Bali</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    (function () {
+      const s = localStorage.getItem('sd:theme');
+      if (s === 'dark' || (!s && window.matchMedia('(prefers-color-scheme: dark)').matches))
+        document.documentElement.classList.add('dark');
+    })();
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            display: ['Fraunces', 'serif'],
+            sans: ['"Space Grotesk"', 'sans-serif'],
+            mono: ['"IBM Plex Mono"', 'monospace'],
+          },
+          colors: {
+            paper: 'var(--paper)', panel: 'var(--panel)', ink: 'var(--ink)',
+            soft: 'var(--soft)', faint: 'var(--faint)', line: 'var(--line)',
+            rail: 'var(--rail)', 'rail-ink': 'var(--rail-ink)', 'rail-soft': 'var(--rail-soft)',
+            fuel: '#e8542f', moss: '#3f7d5a',
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    :root {
+      color-scheme: light;
+      --paper: #f6f3ec; --panel: #fffdf8; --ink: #17150f;
+      --soft: #5c574c; --faint: #8f897b; --line: #17150f;
+      --rail: #17150f; --rail-ink: #f6f3ec; --rail-soft: #a7a196;
+    }
+    .dark {
+      color-scheme: dark;
+      --paper: #141310; --panel: #1d1b17; --ink: #f0ece2;
+      --soft: #b3ac9e; --faint: #7d7768; --line: #f0ece2;
+      --rail: #0c0b09; --rail-ink: #f0ece2; --rail-soft: #8f897b;
+    }
+    body { background: var(--paper); color: var(--ink); }
+
+    /* ── Shared tokens ── */
+    .hairline { border: 1.5px solid var(--line); }
+    .rule { border-bottom: 1.5px solid var(--line); }
+    .kicker { font-family: "IBM Plex Mono", monospace; font-size: .7rem; letter-spacing: .14em; text-transform: uppercase; color: var(--faint); }
+
+    /* ── Buttons ── */
+    .btn-fuel {
+      background: #e8542f; color: #fffdf8; border: 1.5px solid #17150f;
+      box-shadow: 3px 3px 0 0 var(--line);
+      transition: transform .1s ease, box-shadow .1s ease;
+    }
+    .btn-fuel:hover { transform: translate(-1px,-1px); box-shadow: 4px 4px 0 0 var(--line); }
+    .btn-fuel:active { transform: translate(2px,2px); box-shadow: 1px 1px 0 0 var(--line); }
+    .btn-ghost { border: 1.5px solid var(--line); background: transparent; color: var(--ink); }
+    .btn-ghost:hover { background: var(--ink); color: var(--paper); }
+
+    /* ── Form controls ── */
+    .fld { background: var(--panel); border: 1.5px solid var(--line); color: var(--ink); border-radius: 2px; }
+    .fld::placeholder { color: var(--faint); }
+    .fld:focus { outline: 2px solid #e8542f; outline-offset: 1px; }
+    select.fld option { background: var(--panel); color: var(--ink); }
+    .rail-fld { background: transparent; color: var(--rail-ink); border: 1.5px solid var(--rail-soft); border-radius: 2px; }
+    .rail-fld:focus { outline: 2px solid #e8542f; outline-offset: 1px; }
+    .rail-fld option { background: var(--rail); color: var(--rail-ink); }
+    .rail-fld::placeholder { color: var(--rail-soft); }
+
+    /* ── Tone segmented control ── */
+    .tone-btn { border: 1.5px solid var(--line); background: var(--panel); color: var(--ink);
+      font-family: "IBM Plex Mono", monospace; font-size: .72rem; letter-spacing: .04em; text-transform: uppercase;
+      padding: .4rem .7rem; transition: all .1s ease; }
+    .tone-btn:hover { background: var(--paper); }
+    .tone-btn[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
+
+    /* ── Rail scrollbar ── */
+    .rail-scroll::-webkit-scrollbar { display: none; }
+    .rail-scroll { -ms-overflow-style: none; scrollbar-width: none; }
+
+    @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+  </style>
+</head>
+<body class="font-sans antialiased">
+
+  <!-- ══════════════════════════════════════════════
+       STICKY TOP NAV
+       ══════════════════════════════════════════════ -->
+  <nav class="sticky top-0 z-30" style="background:var(--paper);border-bottom:1.5px solid var(--line)">
+    <div class="max-w-6xl mx-auto flex items-center justify-between px-5 py-3">
+      <span class="font-display text-xl font-bold">SuaraDagang</span>
+      <div class="flex items-center gap-4">
+        <a href="#cara-kerja" class="hidden sm:block kicker hover:text-ink transition">Cara kerja</a>
+        <a href="#tool" class="hidden sm:block kicker hover:text-ink transition">Generator</a>
+        <button id="themeToggle" type="button" aria-label="Ganti tema" class="w-8 h-8 flex items-center justify-center rounded-full" style="border:1.5px solid var(--line)">
+          <span class="theme-light hidden">🌙</span>
+          <span class="theme-dark hidden">☀️</span>
+        </button>
+        <a href="#tool" class="btn-fuel px-4 py-2 text-xs font-bold uppercase tracking-wide">Mulai generate</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ══════════════════════════════════════════════
+       HERO BAND (left-aligned editorial, no card grid)
+       ══════════════════════════════════════════════ -->
+  <section id="hero" class="px-5 sm:px-10 pt-14 sm:pt-22 pb-12 sm:pb-16 max-w-6xl mx-auto">
+    <span class="kicker">SuaraDagang / Generator caption UMKM Bali</span>
+    <h1 class="font-display font-bold leading-[1.05] mt-3" style="font-size:clamp(2.2rem,5vw,3.8rem)">
+      Caption jualan yang<br/>
+      bikin orang <span class="inline-block px-2 rounded" style="background:#3f7d5a;color:#fffdf8;border:1.5px solid #17150f">beli</span>,<br/>
+      bukan sekadar like.
+    </h1>
+    <p class="text-base sm:text-lg mt-4 max-w-xl leading-relaxed" style="color:var(--soft)">
+      Isi deskripsi produkmu, pilih gaya bahasa, dapatkan tiga opsi caption + 15 hashtag yang siap copy-paste ke Instagram. Untuk pedagang, bukan kreator.
+    </p>
+    <div class="flex flex-wrap items-center gap-3 mt-6">
+      <a href="#tool" class="btn-fuel px-6 py-3 text-sm font-bold uppercase tracking-wide">Coba sekarang</a>
+      <a href="#cara-kerja" class="btn-ghost px-6 py-3 text-sm font-bold uppercase tracking-wide">Lihat cara kerja</a>
+    </div>
+
+    <!-- Stats row — editorial inline, no boxes -->
+    <div class="rule mt-8 pt-5 flex flex-wrap gap-x-8 gap-y-3">
+      <div>
+        <span class="font-display text-3xl font-bold">3</span>
+        <p class="kicker mt-1">Opsi caption</p>
+      </div>
+      <div>
+        <span class="font-display text-3xl font-bold">15</span>
+        <p class="kicker mt-1">Hashtag lokal Bali</p>
+      </div>
+      <div>
+        <span class="font-display text-3xl font-bold">&lt;15<span class="text-lg">dtk</span></span>
+        <p class="kicker mt-1">Siap posting</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════
+       CARA KERJA — editorial numbered list, not card grid
+       ══════════════════════════════════════════════ -->
+  <section id="cara-kerja" class="px-5 sm:px-10 py-12 sm:py-16" style="background:var(--panel)">
+    <div class="max-w-6xl mx-auto">
+      <span class="kicker">Workflow</span>
+      <h2 class="font-display font-bold text-3xl sm:text-4xl mt-2">Tiga langkah, beres.</h2>
+      <p class="mt-2 max-w-md" style="color:var(--soft)">Tanpa daftar, tanpa kartu kredit, tanpa drama. Brief masuk, caption keluar.</p>
+
+      <ol class="mt-8 space-y-6 max-w-2xl">
+        <li class="rule pb-5 flex gap-5">
+          <span class="font-display text-4xl font-bold shrink-0" style="color:#e8542f">01</span>
+          <div>
+            <h3 class="font-bold text-lg">Ceritakan produkmu</h3>
+            <p class="text-sm mt-1" style="color:var(--soft)">Nama usaha, nama produk, deskripsi singkat, kategori. Makin jelas, makin nendang captionnya.</p>
+          </div>
+        </li>
+        <li class="rule pb-5 flex gap-5">
+          <span class="font-display text-4xl font-bold shrink-0" style="color:#3f7d5a">02</span>
+          <div>
+            <h3 class="font-bold text-lg">Pilih gaya bahasa</h3>
+            <p class="text-sm mt-1" style="color:var(--soft)">Santai, formal, promosi, atau Bali Vibes dengan sentuhan Rahajeng sesuai karakter usahamu.</p>
+          </div>
+        </li>
+        <li class="pb-1 flex gap-5">
+          <span class="font-display text-4xl font-bold shrink-0" style="color:var(--ink)">03</span>
+          <div>
+            <h3 class="font-bold text-lg">Salin dan posting</h3>
+            <p class="text-sm mt-1" style="color:var(--soft)">Tiga caption + 15 hashtag lokal, satu tombol salin paket siap paste ke Instagram.</p>
+          </div>
+        </li>
+      </ol>
+
+      <a href="#tool" class="inline-block mt-8 btn-fuel px-6 py-3 text-sm font-bold uppercase tracking-wide">Mulai generate sekarang</a>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════
+       WORKSPACE — rail + output feed
+       ══════════════════════════════════════════════ -->
+  <div id="tool" class="min-h-screen grid lg:grid-cols-[380px_1fr]">
+    <!-- ── LEFT COMMAND RAIL ── -->
+    <aside class="rail-scroll text-[var(--rail-ink)] lg:sticky lg:top-[53px] lg:h-[calc(100vh-53px)] overflow-y-auto" style="background:var(--rail)">
+      <div class="p-6 pr-10 sm:p-8 sm:pr-12">
+        <div class="rule pb-4" style="border-color:var(--rail-soft)">
+          <p class="kicker" style="color:var(--rail-soft)">Generator / UMKM Bali</p>
+          <h2 class="font-display text-2xl leading-tight mt-1">
+            Tiga caption,<br/>lima belas hashtag,<br/><span style="color:#e8542f">tulis sekali.</span>
+          </h2>
+        </div>
+
+        <form id="genForm" class="mt-6 space-y-4">
+          <div class="grid grid-cols-2 gap-3">
+            <label class="block">
+              <span class="kicker" style="color:var(--rail-soft)">Nama usaha</span>
+              <input id="brand" placeholder="Warung Sari Rasa" class="mt-1 w-full px-3 py-2 text-sm rail-fld" />
+            </label>
+            <label class="block">
+              <span class="kicker" style="color:var(--rail-soft)">Kategori</span>
+              <select id="category" class="mt-1 w-full px-3 py-2 text-sm rail-fld">
+                <option value="kuliner">Kuliner</option>
+                <option value="fashion">Fashion</option>
+                <option value="kerajinan">Kerajinan</option>
+                <option value="jasa">Jasa</option>
+                <option value="umum">Umum</option>
+              </select>
+            </label>
+          </div>
+
+          <label class="block">
+            <span class="kicker" style="color:var(--rail-soft)">Nama produk *</span>
+            <input required id="product" placeholder="Ayam Betutu Frozen 500 gr" class="fld mt-1 w-full px-3 py-2 text-sm" />
+          </label>
+
+          <label class="block">
+            <span class="kicker" style="color:var(--rail-soft)">Deskripsi *</span>
+            <textarea required id="desc" rows="4" placeholder="Ayam kampung, bumbu base gede, tahan 1 bulan, Rp 85.000..." class="fld mt-1 w-full px-3 py-2 text-sm"></textarea>
+          </label>
+
+          <div>
+            <span class="kicker" style="color:var(--rail-soft)">Gaya bahasa</span>
+            <div class="flex flex-wrap gap-1.5 mt-1.5" id="toneGroup">
+              <button type="button" class="tone-btn" aria-pressed="true">Santai</button>
+              <button type="button" class="tone-btn" aria-pressed="false">Formal</button>
+              <button type="button" class="tone-btn" aria-pressed="false">Promosi</button>
+              <button type="button" class="tone-btn" aria-pressed="false">Bali Vibes</button>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-3">
+            <label class="block">
+              <span class="kicker" style="color:var(--rail-soft)">Bahasa</span>
+              <select id="lang" class="mt-1 w-full px-3 py-2 text-sm rail-fld">
+                <option value="id">Indonesia</option>
+                <option value="en">English</option>
+              </select>
+            </label>
+            <label class="block">
+              <span class="kicker" style="color:var(--rail-soft)">Foto (opsional)</span>
+              <input type="file" accept="image/*" class="mt-1 w-full text-xs" style="color:var(--rail-soft)" />
+            </label>
+          </div>
+
+          <button type="submit" class="btn-fuel w-full py-3 font-bold tracking-wide uppercase text-sm">Generate</button>
+          <p class="text-xs text-center" style="color:var(--rail-soft)">Brief tidak disimpan di server.</p>
+        </form>
+      </div>
+    </aside>
+
+    <!-- ── RIGHT OUTPUT FEED ── -->
+    <section class="px-5 sm:px-10 py-8 sm:py-12">
+      <header class="flex items-baseline justify-between rule pb-3">
+        <span class="kicker">Output feed</span>
+        <span class="kicker" id="clock">—</span>
+      </header>
+
+      <!-- Empty state -->
+      <div id="placeholder" class="mt-10 max-w-2xl">
+        <p class="font-display text-4xl sm:text-5xl leading-[1.05]">Panel ini masih kosong.</p>
+        <p class="text-sm mt-3 max-w-md" style="color:var(--soft)">Isi brief di rail kiri lalu tekan Generate. Tiga opsi caption bergaya berbeda plus hashtag lokal Bali akan mendarat di sini.</p>
+        <ul class="mt-6 space-y-2 text-sm" style="color:var(--faint)">
+          <li class="flex gap-3"><span class="kicker">01</span> Santai - sapaan akrab, emoji hemat</li>
+          <li class="flex gap-3"><span class="kicker">02</span> Formal - info lengkap, tanpa basa-basi</li>
+          <li class="flex gap-3"><span class="kicker">03</span> Promosi - urgensi + ajakan pesan</li>
+        </ul>
+      </div>
+
+      <!-- Results -->
+      <div id="resultCards" class="hidden mt-8 space-y-8">
+        <div class="flex items-baseline gap-4 rule pb-2">
+          <h3 class="font-display text-2xl">Hasil</h3>
+          <span class="kicker" id="resultMeta"></span>
+        </div>
+        <ol id="captionCards" class="space-y-5"></ol>
+        <div class="hairline p-5" style="background:var(--panel)">
+          <div class="flex items-center justify-between mb-3">
+            <span class="kicker">Hashtag / 15 tag</span>
+            <button onclick="copyTags()" id="tagCopyBtn" class="btn-ghost px-3 py-1 text-xs font-bold uppercase tracking-wide">Salin</button>
+          </div>
+          <p id="tagBlock" class="text-sm leading-relaxed break-words font-mono" style="color:var(--soft)"></p>
+        </div>
+        <div class="flex flex-wrap gap-3">
+          <button onclick="copyAll()" id="copyAllBtn" class="btn-fuel px-5 py-3 text-sm font-bold uppercase tracking-wide">Salin paket siap posting</button>
+          <button onclick="resetFeed()" class="btn-ghost px-5 py-3 text-sm font-bold uppercase tracking-wide">Bersihkan panel</button>
+        </div>
+      </div>
+
+      <!-- History -->
+      <header class="mt-14 flex items-baseline justify-between rule pb-3">
+        <span class="kicker">Arsip lokal / browser</span>
+        <span class="kicker" id="histCount">0 item</span>
+      </header>
+      <ul id="historyList" class="mt-4 divide-y" style="border-color:var(--line)">
+        <li class="py-3 text-sm" style="color:var(--faint)">Belum ada arsip. Hasil generate tersimpan otomatis di browser ini.</li>
+      </ul>
+
+      <footer class="mt-16 rule pb-3 flex justify-between text-xs" style="color:var(--faint)">
+        <span class="font-display">SuaraDagang &copy; 2026</span>
+        <span class="kicker">Dibangun untuk UMKM Bali</span>
+      </footer>
+    </section>
+  </div>
+
+  <script>
+    // ── Theme ──
+    function syncTheme() {
+      const d = document.documentElement.classList.contains('dark');
+      document.querySelectorAll('.theme-light').forEach(e => e.classList.toggle('hidden', d));
+      document.querySelectorAll('.theme-dark').forEach(e => e.classList.toggle('hidden', !d));
+    }
+    document.querySelectorAll('#themeToggle, #themeToggleMobile').forEach(b =>
+      b.addEventListener('click', () => {
+        document.documentElement.classList.toggle('dark');
+        localStorage.setItem('sd:theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
+        syncTheme();
+      })
+    );
+    syncTheme();
+
+    // ── Clock ──
+    document.getElementById('clock').textContent = new Date().toLocaleString('id-ID', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' });
+
+    // ── Tone segmented control ──
+    const toneBtns = [...document.querySelectorAll('#toneGroup .tone-btn')];
+    toneBtns.forEach(b => b.addEventListener('click', () => {
+      toneBtns.forEach(x => x.setAttribute('aria-pressed', 'false'));
+      b.setAttribute('aria-pressed', 'true');
+    }));
+
+    // ── Mock data ──
+    const MOCK = {
+      captions: [
+        { label: "santai", text: "Bos, ada yang nyari ayam betutu frozen enak? Ayam kampung penuh bumbu base gede, tinggal goreng atau bakar. Tahan sebulan di freezer, harga cuma 85 ribu. Langsung DM ya, Rahajeng!" },
+        { label: "formal", text: "Ayam Betutu Frozen 500 gr dari Warung Sari Rasa. Berbahan ayam kampung pilihan dengan bumbu tradisional Bali autentik. Tahan hingga satu bulan dalam kondisi beku. Harga Rp 85.000. Pemesanan: kirim DM atau hubungi kami." },
+        { label: "promosi", text: "Makan betutu tiap hari? Bisa! Ayam Betutu Frozen kami siap masak kapan saja. Bumbu ngeresap, tekstur juicy, harga ramah kantong: Rp 85.000 per 500 gr. Stok terbatas - order sekarang sebelum kehabisan!" }
+      ],
+      hashtags: ["#umkmbali","#belilokal","#dukungumkm","#madeinbali","#banggalokal","#kulinerbali","#makananbali","#baliufood","#betutubali","#frozenfood","#foodiebali","#masakannusantara","#oleholehbali","#ayambetutu","#rasabali"]
+    };
+
+    // ── History ──
+    let historyItems = JSON.parse(localStorage.getItem('sd:history') || '[]');
+    function saveHistory() { localStorage.setItem('sd:history', JSON.stringify(historyItems)); }
+    function renderHistory() {
+      const ul = document.getElementById('historyList');
+      document.getElementById('histCount').textContent = historyItems.length + ' item';
+      if (!historyItems.length) {
+        ul.innerHTML = '<li class="py-3 text-sm" style="color:var(--faint)">Belum ada arsip. Hasil generate tersimpan otomatis di browser ini.</li>';
+        return;
+      }
+      ul.innerHTML = historyItems.map((h, i) => `
+        <li class="py-3 flex items-center justify-between gap-3 text-sm">
+          <button class="text-left hover:underline" onclick="restore(${i})">
+            <span class="font-bold">${h.product}</span>
+            <span class="kicker"> ${h.tone} / ${h.at}</span>
+          </button>
+          <button class="kicker hover:text-red-500" onclick="removeHistory(${i})">hapus</button>
+        </li>`).join('');
+    }
+    function restore(i) { renderResult(MOCK, historyItems[i].product, false); }
+    function removeHistory(i) { historyItems.splice(i, 1); saveHistory(); renderHistory(); }
+
+    function renderResult(data, product, push = true) {
+      document.getElementById('placeholder').classList.add('hidden');
+      document.getElementById('resultCards').classList.remove('hidden');
+      document.getElementById('resultMeta').textContent = (product || document.getElementById('product').value || 'preview') + ' / ' + data.captions.length + ' opsi / ' + data.hashtags.length + ' tag';
+      document.getElementById('captionCards').innerHTML = data.captions.map((c, i) => `
+        <li class="hairline p-5" style="background:var(--panel)">
+          <div class="flex items-center justify-between mb-2">
+            <span class="kicker">${String(i + 1).padStart(2, '0')} / ${c.label}</span>
+            <button onclick="copy('cap${i}', this)" class="btn-ghost px-3 py-1 text-xs font-bold uppercase tracking-wide">Salin</button>
+          </div>
+          <p class="text-[15px] leading-relaxed whitespace-pre-wrap">${c.text}</p>
+        </li>`).join('');
+      document.getElementById('tagBlock').textContent = data.hashtags.join(' ');
+      if (push) {
+        const prod = document.getElementById('product').value || 'preview';
+        historyItems.unshift({ product: prod, tone: document.querySelector('#toneGroup [aria-pressed="true"]').textContent, at: new Date().toLocaleString('id-ID', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' }), captions: data.captions, hashtags: data.hashtags });
+        historyItems = historyItems.slice(0, 20);
+        saveHistory();
+      }
+      renderHistory();
+    }
+
+    function resetFeed() {
+      document.getElementById('resultCards').classList.add('hidden');
+      document.getElementById('placeholder').classList.remove('hidden');
+    }
+
+    document.getElementById('genForm').addEventListener('submit', e => {
+      e.preventDefault();
+      renderResult(MOCK);
+      if (window.innerWidth < 1024) document.getElementById('resultCards').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+
+    async function copy(key, btn) {
+      const map = {
+        cap0: MOCK.captions[0].text, cap1: MOCK.captions[1].text, cap2: MOCK.captions[2].text,
+        tags: MOCK.hashtags.join(' '),
+        all: MOCK.captions[0].text + '\n\n.\n.\n.\n' + MOCK.hashtags.join(' ')
+      };
+      const text = map[key];
+      if (!text) return;
+      try { await navigator.clipboard.writeText(text); } catch {}
+      if (btn) { const o = btn.textContent; btn.textContent = 'Tersalin'; setTimeout(() => btn.textContent = o, 1200); }
+    }
+    function copyTags() { copy('tags', document.getElementById('tagCopyBtn')); }
+    function copyAll() { copy('all', document.getElementById('copyAllBtn')); }
+
+    renderHistory();
+  </script>
+</body>
+</html>
