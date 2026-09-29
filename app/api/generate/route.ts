@@ -34,6 +34,24 @@ export async function POST(req: NextRequest) {
     );
   }
 
+  const input: GenerateInput = {
+    businessName: businessName?.trim() || "-",
+    product: product.trim(),
+    description: description.trim(),
+    category: category || "umum",
+    tone: tone || "santai",
+    language: language || "id",
+  };
+
+  // Cache before rate limit: identical input costs nothing, so it must not
+  // consume the user's quota.
+  const cacheKey = hashInput({ ...input, hasImage: !!imageBase64 });
+  const cached = getCache(cacheKey);
+  if (cached) {
+    return NextResponse.json({ ...(cached as object), cached: true });
+  }
+
+  // Rate limit only actual AI calls.
   const ip =
     req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ??
     "unknown";
@@ -47,21 +65,6 @@ export async function POST(req: NextRequest) {
       },
       { status: 429 }
     );
-  }
-
-  const input: GenerateInput = {
-    businessName: businessName?.trim() || "-",
-    product: product.trim(),
-    description: description.trim(),
-    category: category || "umum",
-    tone: tone || "santai",
-    language: language || "id",
-  };
-
-  const cacheKey = hashInput({ ...input, hasImage: !!imageBase64 });
-  const cached = getCache(cacheKey);
-  if (cached) {
-    return NextResponse.json({ ...(cached as object), cached: true });
   }
 
   const prompt = buildPrompt(input);

@@ -1,6 +1,113 @@
 @import "tailwindcss";
 
+/* ──────────────────────────────────────────────
+   SuaraDagang design tokens (docs/DESIGN.md)
+   Light = :root, Dark = .dark class on <html>
+   ────────────────────────────────────────────── */
+:root {
+  color-scheme: light;
+  --paper: #f6f3ec;
+  --panel: #fffdf8;
+  --ink: #17150f;
+  --soft: #5c574c;
+  --faint: #8f897b;
+  --line: #17150f;
+  --rail: #17150f;
+  --rail-ink: #f6f3ec;
+  --rail-soft: #a7a196;
+  --fuel: #e8542f;
+  --moss: #3f7d5a;
+}
+.dark {
+  color-scheme: dark;
+  --paper: #141310;
+  --panel: #1d1b17;
+  --ink: #f0ece2;
+  --soft: #b3ac9e;
+  --faint: #7d7768;
+  --line: #f0ece2;
+  --rail: #0c0b09;
+  --rail-ink: #f0ece2;
+  --rail-soft: #8f897b;
+}
+
 body {
-  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
-    "Helvetica Neue", Arial, sans-serif;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
+}
+
+/* ── Structure ── */
+.hairline { border: 1.5px solid var(--line); }
+.rule { border-bottom: 1.5px solid var(--line); }
+.kicker {
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--faint);
+}
+
+/* ── Buttons ── */
+.btn-fuel {
+  background: var(--fuel);
+  color: #fffdf8;
+  border: 1.5px solid var(--ink);
+  box-shadow: 3px 3px 0 0 var(--line);
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+}
+.btn-fuel:hover { transform: translate(-1px, -1px); box-shadow: 4px 4px 0 0 var(--line); }
+.btn-fuel:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 0 var(--line); }
+.btn-fuel:disabled { opacity: 0.6; cursor: not-allowed; transform: none; box-shadow: 3px 3px 0 0 var(--line); }
+.btn-ghost { border: 1.5px solid var(--line); background: transparent; color: var(--ink); }
+.btn-ghost:hover { background: var(--ink); color: var(--paper); }
+
+/* ── Form controls (feed / light side) ── */
+.fld {
+  background: var(--panel);
+  border: 1.5px solid var(--line);
+  color: var(--ink);
+  border-radius: 2px;
+}
+.fld::placeholder { color: var(--faint); }
+.fld:focus { outline: 2px solid var(--fuel); outline-offset: 1px; }
+select.fld option { background: var(--panel); color: var(--ink); }
+
+/* ── Form controls (dark rail) ── */
+.rail-fld {
+  background: transparent;
+  color: var(--rail-ink);
+  border: 1.5px solid var(--rail-soft);
+  border-radius: 2px;
+}
+.rail-fld::placeholder { color: var(--rail-soft); }
+.rail-fld:focus { outline: 2px solid var(--fuel); outline-offset: 1px; }
+.rail-fld option { background: var(--rail); color: var(--rail-ink); }
+
+/* ── Tone segmented control ── */
+.tone-btn {
+  border: 1.5px solid var(--rail-soft);
+  background: transparent;
+  color: var(--rail-ink);
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 0.4rem 0.7rem;
+  transition: all 0.1s ease;
+}
+.tone-btn:hover { background: rgba(255, 255, 255, 0.08); }
+.tone-btn[aria-pressed="true"] {
+  background: var(--rail-ink);
+  color: var(--rail);
+  border-color: var(--rail-ink);
+}
+
+/* ── Rail scrollbar hidden, still scrollable ── */
+.rail-scroll::-webkit-scrollbar { display: none; }
+.rail-scroll { -ms-overflow-style: none; scrollbar-width: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; animation: none !important; }
 }
