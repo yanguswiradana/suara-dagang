@@ -71,19 +71,21 @@ export async function POST(req: NextRequest) {
   let raw: string;
   try {
     raw = await callGemini(apiKey, model, prompt, imageBase64);
-  } catch {
+  } catch (e) {
+    const detail = e instanceof Error ? e.message : "unknown";
     // Fallback: retry once WITHOUT the image (text-only path always works).
     if (!imageBase64) {
       return NextResponse.json(
-        { error: "AI sedang sibuk / kuota habis. Coba lagi sebentar." },
+        { error: `AI gagal [${model}]: ${detail}` },
         { status: 502 }
       );
     }
     try {
       raw = await callGemini(apiKey, model, prompt);
-    } catch {
+    } catch (e2) {
+      const detail2 = e2 instanceof Error ? e2.message : "unknown";
       return NextResponse.json(
-        { error: "AI sedang sibuk / kuota habis. Coba lagi sebentar." },
+        { error: `AI gagal [${model}]: ${detail2}` },
         { status: 502 }
       );
     }
