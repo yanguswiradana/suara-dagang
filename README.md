@@ -45,6 +45,10 @@ Deploy ke Vercel: import repo → tambah env `GEMINI_API_KEY` (+ opsional
 
 ## 🧠 Cara kerja
 
+![Alur generate SuaraDagang](docs/assets/flow.png)
+
+> Versi interaktif: buka [`docs/flow.html`](docs/flow.html) — bisa zoom, search node, dan trace jalur.
+
 ```
 Form → POST /api/generate → cache hash? → rate limit → Gemini (3 varian + 15 tag)
      → sanitize hashtag → tampil + simpan ke localStorage
