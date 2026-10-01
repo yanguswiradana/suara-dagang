@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import {
   loadBrand,
   saveBrand,
@@ -81,12 +81,27 @@ export default function Home() {
   }, []);
 
   // ─ Image handler ─
+  const fileRef = useRef<HTMLInputElement>(null);
   function onImage(e: React.ChangeEvent<HTMLInputElement>) {
     const f = e.target.files?.[0];
     if (!f) return setImage(undefined);
     const reader = new FileReader();
     reader.onload = () => setImage(String(reader.result));
     reader.readAsDataURL(f);
+  }
+
+  // ─ Bersihkan panel: reset hasil + seluruh form ─
+  function clearPanel() {
+    setResult(null);
+    setError("");
+    setBrand({ businessName: "", category: "kuliner", location: "" });
+    setProduct("");
+    setDesc("");
+    setTone("santai");
+    setLang("id");
+    setImage(undefined);
+    if (fileRef.current) fileRef.current.value = "";
+    saveBrand({ businessName: "", category: "kuliner", location: "" });
   }
 
   // ─ Submit ─
@@ -339,7 +354,7 @@ export default function Home() {
                 </label>
                 <label className="block">
                   <span className="kicker" style={{ color: "var(--rail-soft)" }}>Foto (opsional)</span>
-                  <input type="file" accept="image/*" onChange={onImage} className="mt-1 w-full text-xs" style={{ color: "var(--rail-soft)" }} />
+                  <input ref={fileRef} type="file" accept="image/*" onChange={onImage} className="mt-1 w-full text-xs" style={{ color: "var(--rail-soft)" }} />
                 </label>
               </div>
 
@@ -430,7 +445,7 @@ export default function Home() {
                 >
                   Salin paket siap posting
                 </button>
-                <button onClick={() => setResult(null)} className="btn-ghost px-5 py-3 text-sm font-bold uppercase tracking-wide">
+                <button onClick={clearPanel} className="btn-ghost px-5 py-3 text-sm font-bold uppercase tracking-wide">
                   Bersihkan panel
                 </button>
               </div>
